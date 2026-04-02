@@ -13,6 +13,10 @@
         {
           "type": "generic",
           "path": "ext/rbspy/Cargo.toml"
+        },
+        {
+          "type": "generic",
+          "path": "lib/pyroscope/version.rb"
         }
       ]
     }
