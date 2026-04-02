@@ -4,12 +4,16 @@
     ".": {
       "component": "ruby",
       "release-type": "ruby",
+      "package-name": "pyroscope",
       "changelog-path": "CHANGELOG.md",
       "include-v-in-tag": false,
       "include-component-in-tag": true,
       "skip-github-release": true,
       "extra-files": [
-        "ext/rbspy/Cargo.toml"
+        {
+          "type": "generic",
+          "path": "ext/rbspy/Cargo.toml"
+        }
       ]
     }
   },
