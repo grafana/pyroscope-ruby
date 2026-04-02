@@ -5,7 +5,8 @@ dist/
 .env/
 
 .idea/
-/target/
+**/target/
+pkg/
 **/*.rs.bk
 .cache
 .DS_Store

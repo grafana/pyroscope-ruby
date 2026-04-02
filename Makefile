@@ -1,61 +1,45 @@
+.PHONY: header
+header:
+	cd ext/rbspy && cbindgen --config cbindgen.toml --output include/rbspy.h
 
-COMMIT = $(shell git rev-parse --short HEAD)
-DOCKER_EXTRA ?=
-DOCKER_BUILDKIT=1
-BUMP ?= fix
+.PHONY: linux/amd64
+linux/amd64:
+	docker buildx build \
+		--build-arg=PLATFORM=x86_64 \
+		--build-arg="TARGET_TASK=x86_64_linux:gem" \
+		--output=. \
+		--platform=linux/amd64 \
+		-f Dockerfile \
+		.
 
+.PHONY: linux/arm64
+linux/arm64:
+	docker buildx build  \
+		--build-arg=PLATFORM=aarch64 \
+		--build-arg="TARGET_TASK=aarch64_linux:gem" \
+		--output=. \
+		--platform=linux/arm64 \
+		-f Dockerfile \
+		.
 
+.PHONY: mac/amd64
+mac/amd64:
+	bundle && \
+		RUST_TARGET=x86_64-apple-darwin rake rbspy_install && \
+		RUST_TARGET=x86_64-apple-darwin rake x86_64_darwin:gem
 
-.PHONY: lib/test
-lib/test:
-	cargo  test --manifest-path Cargo.toml
+.PHONY: mac/arm64
+mac/arm64:
+	bundle && \
+		RUST_TARGET=aarch64-apple-darwin rake rbspy_install && \
+		RUST_TARGET=aarch64-apple-darwin rake arm64_darwin:gem
 
-.PHONY: pprofrs/test
-pprofrs/test:
-	cargo  test --manifest-path Cargo.toml --features backend-pprof-rs
-
-
-.PHONY: ffikit/test
-ffikit/test:
-	cargo  test --manifest-path pyroscope_ffi/ffikit/Cargo.toml
-
-.PHONY: test
-test: pprofrs/test  lib/test ffikit/test
-
-
-.PHONY: rust/fmt
-rust/fmt:
-	cargo fmt --all
-
-
-.PHONY: rust/fmt/check
-rust/fmt/check:
-	cargo fmt --all --check
-
-
-.PHONY: ruby/version/bump
-ruby/version/bump:
-	BUMP=$(BUMP) bash ci/bump_ffi_version.sh ruby
-
-
-.PHONY: python/version/bump
-python/version/bump:
-	BUMP=$(BUMP) bash ci/bump_ffi_version.sh python
-
-
-.PHONY: ffi/python/header
-ffi/python/header:
-	cd pyroscope_ffi/python/rust && cbindgen --config cbindgen.toml --output include/pyroscope_ffi.h
-
-
-.PHONY: ffi/python/cffi
-ffi/python/cffi:
-	python pyroscope_ffi/python/scripts/tests/compile_ffi.py
-
-
-.PHONY: ffi/ruby/header
-ffi/ruby/header:
-	cd pyroscope_ffi/ruby/ext/rbspy && cbindgen --config cbindgen.toml --output include/rbspy.h
-
-
-include ffi.mk
+.PHONY: check/tag-version
+check/tag-version:
+	@TAG_VERSION=$${TAG#ruby-}; \
+	CARGO_VERSION=$$(sed -n 's/^version = "\(.*\)"/\1/p' ext/rbspy/Cargo.toml); \
+	if [ "$$TAG_VERSION" != "$$CARGO_VERSION" ]; then \
+		echo "error: tag version ($$TAG_VERSION) does not match Cargo.toml version ($$CARGO_VERSION)"; \
+		exit 1; \
+	fi; \
+	echo "tag version ($$TAG_VERSION) matches Cargo.toml version ($$CARGO_VERSION)"

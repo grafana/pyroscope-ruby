@@ -1,22 +1,24 @@
-## Pyroscope Profiler
+# Pyroscope Ruby Gem
 
-**Pyroscope Profiler for Rust. Profile your Rust applications.**
+Ruby integration for [Pyroscope](https://grafana.com/oss/pyroscope/) continuous profiling platform.
 
-[![license](https://img.shields.io/badge/license-Apache2.0-blue.svg)](LICENSE) 
-[![Crate](https://img.shields.io/crates/v/pyroscope.svg)](https://crates.io/crates/pyroscope)
+## Installation
 
+```
+gem install pyroscope
+```
 
-### Major Contributors
+## Usage
 
-We'd like to give a big thank you to the following contributors who have made significant contributions to this project:
+```ruby
+require 'pyroscope'
 
-* [Abid Omar](https://github.com/omarabid)
-* [Anatoly Korniltsev](https://github.com/korniltsev)
-* [Bernhard Schuster](https://github.com/drahnr)
+Pyroscope.configure do |config|
+  config.application_name = "my.ruby.app"
+  config.server_address = "http://localhost:4040"
+end
+```
 
+## License
 
-### License
-
-Pyroscope is distributed under the Apache License (Version 2.0).
-
-See [LICENSE](LICENSE) for details.
+Apache-2.0
