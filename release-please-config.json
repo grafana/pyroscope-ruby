@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    ".": {
+      "component": "ruby",
+      "release-type": "ruby",
+      "changelog-path": "CHANGELOG.md",
+      "include-v-in-tag": false,
+      "include-component-in-tag": true,
+      "skip-github-release": true,
+      "extra-files": [
+        "ext/rbspy/Cargo.toml"
+      ]
+    }
+  },
+  "bootstrap-sha": "917fe1d6f626b2e3639c72df7066107eee1a19a7"
+}
