@@ -1,7 +1,3 @@
 module Pyroscope
-<<<<<<< HEAD
   VERSION = '1.0.1'.freeze # x-release-please-version
-=======
-  VERSION = '1.0.1'.freeze
->>>>>>> origin/main
 end
