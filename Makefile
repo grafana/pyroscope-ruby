@@ -37,7 +37,7 @@ mac/arm64:
 .PHONY: check/tag-version
 check/tag-version:
 	@TAG_VERSION=$${TAG#ruby-}; \
-	CARGO_VERSION=$$(sed -n 's/^version = "\(.*\)"/\1/p' ext/rbspy/Cargo.toml); \
+	CARGO_VERSION=$$(cargo metadata --no-deps --format-version=1 --manifest-path ext/rbspy/Cargo.toml | jq -r '.packages[0].version'); \
 	if [ "$$TAG_VERSION" != "$$CARGO_VERSION" ]; then \
 		echo "error: tag version ($$TAG_VERSION) does not match Cargo.toml version ($$CARGO_VERSION)"; \
 		exit 1; \
