@@ -18,7 +18,7 @@ jobs:
       files_json: ${{ steps.list-files.outputs.files_json }}
     steps:
       - name: Get secrets from Vault
-        uses: grafana/shared-workflows/actions/get-vault-secrets@fff7794b0b9537b2a37884eef14fa7b184dd4a89 # main
+        uses: grafana/shared-workflows/actions/get-vault-secrets@a2e485723e166cfec831d33751b9e5b66e2d7646 # main
         with:
           repo_secrets: |
             RUBYGEMS_API_KEY=publishing:rubygems_api_key
