@@ -10,7 +10,6 @@
       "include-component-in-tag": true,
       "skip-github-release": false,
       "draft": true,
-      "force-tag-creation": true,
       "changelog-sections": [
         {"type": "feat", "section": "Features"},
         {"type": "fix", "section": "Bug Fixes"},
