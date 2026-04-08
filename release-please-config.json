@@ -9,7 +9,6 @@
       "include-v-in-tag": false,
       "include-component-in-tag": true,
       "skip-github-release": false,
-      "draft": true,
       "changelog-sections": [
         {"type": "feat", "section": "Features"},
         {"type": "fix", "section": "Bug Fixes"},
