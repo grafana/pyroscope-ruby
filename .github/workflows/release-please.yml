@@ -5,13 +5,14 @@ on:
 
 name: Release Please
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   release-please:
     name: Run release-please
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     outputs:
       pr: ${{ steps.rp.outputs.pr }}
       release_created: ${{ steps.rp.outputs.release_created }}
@@ -27,8 +28,6 @@ jobs:
     needs: release-please
     if: needs.release-please.outputs.pr != ''
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -47,139 +46,9 @@ jobs:
           git diff --cached --quiet || git commit -m "chore: update Cargo.lock"
           git push
 
-  verify-release:
+  build-release:
     needs: release-please
     if: needs.release-please.outputs.release_created == 'true'
-    name: Verify release
-    runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-small' || 'ubuntu-latest' }}
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-      - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
-        with:
-          toolchain: stable
-      - name: Verify tag matches package version
-        env:
-          TAG: ${{ needs.release-please.outputs.tag_name }}
-        run: make check/tag-version
-      - name: Verify Cargo version matches Ruby version
-        run: cargo test --locked -- test_cargo_version_matches_ruby_version
-        working-directory: ext/rbspy
-
-  ruby-release-linux:
-    permissions:
-      contents: write
-    needs: [release-please, verify-release]
-    if: needs.release-please.outputs.release_created == 'true'
-    name: Release Linux gem amd64
-    runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-large' || 'ubuntu-latest' }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-      - run: make linux/amd64
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
-        with:
-          name: ${{ github.sha }}-ruby-amd64
-          path: pkg/*.gem
-      - name: Upload release artifact
-        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
-        with:
-          tag_name: ${{ needs.release-please.outputs.tag_name }}
-          draft: true
-          files: pkg/*.gem
-
-  ruby-release-linux-arm:
-    permissions:
-      contents: write
-    needs: [release-please, verify-release]
-    if: needs.release-please.outputs.release_created == 'true'
-    name: Release Linux gem arm64
-    runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-arm64-large' || 'ubuntu-24.04-arm' }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-      - run: make linux/arm64
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
-        with:
-          name: ${{ github.sha }}-ruby-arm64
-          path: pkg/*.gem
-      - name: Upload release artifact
-        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
-        with:
-          tag_name: ${{ needs.release-please.outputs.tag_name }}
-          draft: true
-          files: pkg/*.gem
-
-  ruby-release-macos:
-    permissions:
-      contents: write
-    needs: [release-please, verify-release]
-    if: needs.release-please.outputs.release_created == 'true'
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - macos-version: "14"
-            target: x86_64-apple-darwin
-            mk-arch: amd64
-          - macos-version: "14"
-            target: aarch64-apple-darwin
-            mk-arch: arm64
-    name: macOS - ${{ matrix.target }}
-    runs-on: macos-${{ matrix.macos-version }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-      - uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1.299.0
-        with:
-          ruby-version: '4.0.2'
-      - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
-        with:
-          toolchain: 1.88.0
-          target: ${{ matrix.target }}
-      - run: make mac/${{ matrix.mk-arch }}
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
-        with:
-          name: ${{ github.sha }}-ruby-mac-${{ matrix.target }}
-          path: pkg/*.gem
-      - name: Upload release artifact
-        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
-        with:
-          tag_name: ${{ needs.release-please.outputs.tag_name }}
-          draft: true
-          files: pkg/*.gem
-
-  ruby-release-source:
-    permissions:
-      contents: write
-    needs: [release-please, verify-release]
-    if: needs.release-please.outputs.release_created == 'true'
-    name: source
-    runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-small' || 'ubuntu-latest' }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-      - uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1.299.0
-        with:
-          ruby-version: '4.0.2'
-      - name: Install bundles
-        run: bundle
-      - name: Build source gem
-        run: rake source:gem
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
-        with:
-          name: ${{ github.sha }}-ruby-source
-          path: pkg/*.gem
-      - name: Upload release artifact
-        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
-        with:
-          tag_name: ${{ needs.release-please.outputs.tag_name }}
-          draft: true
-          files: pkg/*.gem
+    uses: ./.github/workflows/release.yml
+    with:
+      tag_name: ${{ needs.release-please.outputs.tag_name }}
