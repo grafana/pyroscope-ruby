@@ -8,26 +8,6 @@ on:
         type: string
 
 jobs:
-  ruby-release:
-    permissions:
-      contents: write
-    name: Verify release
-    runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-small' || 'ubuntu-latest' }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-      - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
-        with:
-          toolchain: stable
-      - name: Verify tag matches package version
-        env:
-          TAG: ${{ inputs.tag_name }}
-        run: make check/tag-version
-      - name: Verify Cargo version matches Ruby version
-        run: cargo test --locked -- test_cargo_version_matches_ruby_version
-        working-directory: ext/rbspy
-
   ruby-release-linux:
     permissions:
       contents: write
@@ -151,3 +131,23 @@ jobs:
           tag_name: ${{ inputs.tag_name }}
           draft: true
           files: pkg/*.gem
+
+  ruby-release:
+    permissions:
+      contents: write
+    name: Verify release
+    runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-small' || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: stable
+      - name: Verify tag matches package version
+        env:
+          TAG: ${{ inputs.tag_name }}
+        run: make check/tag-version
+      - name: Verify Cargo version matches Ruby version
+        run: cargo test --locked -- test_cargo_version_matches_ruby_version
+        working-directory: ext/rbspy
