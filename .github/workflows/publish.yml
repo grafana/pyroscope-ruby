@@ -14,14 +14,8 @@ jobs:
     name: "Push ruby gems"
     runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-small' || 'ubuntu-latest' }}
     if: "startsWith(github.event.release.tag_name, 'ruby-')"
-    outputs:
-      files_json: ${{ steps.list-files.outputs.files_json }}
     steps:
-      - name: Get secrets from Vault
-        uses: grafana/shared-workflows/actions/get-vault-secrets@118532c3b40ef110aa628128fe17b51b23c84d84 # main
-        with:
-          repo_secrets: |
-            RUBYGEMS_API_KEY=publishing:rubygems_api_key
+      - uses: rubygems/configure-rubygems-credentials@bc6dd217f8a4f919d6835fcfefd470ef821f5c44 # v1.0.0
       - uses: robinraju/release-downloader@daf26c55d821e836577a15f77d86ddc078948b05 # 1.12
         with:
           tag: ${{ github.event.release.tag_name }}
@@ -42,5 +36,3 @@ jobs:
             gem push "${gem}";
             sleep 5;
           done
-        env:
-          GEM_HOST_API_KEY: ${{ env.RUBYGEMS_API_KEY }}
