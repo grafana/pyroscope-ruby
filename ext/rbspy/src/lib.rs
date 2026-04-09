@@ -14,10 +14,13 @@ const LOG_TAG: &str = "Pyroscope::rbspy::ffi";
 const RBSPY_NAME: &str = "rbspy";
 const RBSPY_VERSION: &str = env!("CARGO_PKG_VERSION");
 
-pub fn transform_report(report: Report) -> Report {
-    let cwd = env::current_dir().unwrap();
-    let cwd = cwd.to_str().unwrap_or("");
+fn transform_report_with_current_dir(report: Report) -> Report {
+    let cwd = env::current_dir().ok();
+    let cwd = cwd.as_deref().and_then(|p| p.to_str()).unwrap_or("");
+    transform_report(report, cwd)
+}
 
+pub fn transform_report(report: Report, cwd: &str) -> Report {
     let data = report
         .data
         .iter()
@@ -165,7 +168,7 @@ pub unsafe extern "C" fn initialize_agent(
         RBSPY_VERSION,
         rbspy,
     )
-    .func(transform_report)
+    .func(transform_report_with_current_dir)
     .tags(tags);
 
     if !basic_auth_user.is_empty() && !basic_auth_password.is_empty() {
