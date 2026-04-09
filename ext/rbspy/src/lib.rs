@@ -263,24 +263,59 @@ mod tests {
     use pyroscope::backend::{Report, StackFrame, StackTrace};
     use std::collections::HashMap;
 
-    #[test]
-    fn transform_report_does_not_panic_when_cwd_is_a_suffix_of_filename() {
+    fn report_with_filename(filename: &str) -> Report {
         let stacktrace = StackTrace {
             frames: vec![StackFrame {
-                filename: Some("bin/rails".to_string()),
+                filename: Some(filename.to_string()),
                 ..Default::default()
             }],
             ..Default::default()
         };
-        let report = Report::new(HashMap::from([(stacktrace, 1)]));
+        Report::new(HashMap::from([(stacktrace, 1)]))
+    }
 
+    fn transformed_filename(report: Report) -> String {
+        let (stacktrace, _) = report.data.iter().next().unwrap();
+        stacktrace.frames[0].filename.clone().unwrap()
+    }
+
+    #[test]
+    fn transform_report_does_not_panic_when_cwd_is_a_suffix_of_filename() {
+        let report = report_with_filename("bin/rails");
         let out = transform_report(report, Some("/rails"));
+        assert_eq!(transformed_filename(out), "bin/rails");
+    }
 
-        let (out_stacktrace, _) = out.data.iter().next().unwrap();
+    #[test]
+    fn transform_report_strips_cwd_prefix() {
+        let report = report_with_filename("/rails/app/models/user.rb");
+        let out = transform_report(report, Some("/rails"));
+        assert_eq!(transformed_filename(out), "app/models/user.rb");
+    }
+
+    #[test]
+    fn transform_report_rewrites_gems_path() {
+        let report =
+            report_with_filename("/usr/local/bundle/gems/activerecord-7.0.0/lib/active_record.rb");
+        let out = transform_report(report, None);
         assert_eq!(
-            out_stacktrace.frames[0].filename.as_deref(),
-            Some("bin/rails")
+            transformed_filename(out),
+            "gems/activerecord-7.0.0/lib/active_record.rb",
         );
+    }
+
+    #[test]
+    fn transform_report_rewrites_ruby_stdlib_path() {
+        let report = report_with_filename("/usr/local/lib/ruby/3.3.0/json/common.rb");
+        let out = transform_report(report, None);
+        assert_eq!(transformed_filename(out), "json/common.rb");
+    }
+
+    #[test]
+    fn transform_report_leaves_unrelated_filename_unchanged() {
+        let report = report_with_filename("/tmp/unrelated.rb");
+        let out = transform_report(report, Some("/app"));
+        assert_eq!(transformed_filename(out), "/tmp/unrelated.rb");
     }
 
     #[test]
