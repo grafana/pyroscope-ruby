@@ -16,11 +16,11 @@ const RBSPY_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn transform_report_with_current_dir(report: Report) -> Report {
     let cwd = env::current_dir().ok();
-    let cwd = cwd.as_deref().and_then(|p| p.to_str()).unwrap_or("");
+    let cwd = cwd.as_deref().and_then(|p| p.to_str());
     transform_report(report, cwd)
 }
 
-pub fn transform_report(report: Report, cwd: &str) -> Report {
+pub fn transform_report(report: Report, cwd: Option<&str>) -> Report {
     let data = report
         .data
         .iter()
@@ -31,8 +31,11 @@ pub fn transform_report(report: Report, cwd: &str) -> Report {
                 .map(|frame| {
                     let frame = frame.to_owned();
                     let mut s = frame.filename.unwrap();
-                    if let Some(i) = s.find(cwd) {
-                        s = s[(i + cwd.len() + 1)..].to_string();
+                    let stripped = cwd
+                        .and_then(|c| s.strip_prefix(c))
+                        .and_then(|rest| rest.strip_prefix('/'));
+                    if let Some(rest) = stripped {
+                        s = rest.to_string();
                     } else if let Some(i) = s.find("/gems/") {
                         s = s[(i + 1)..].to_string();
                     } else if let Some(i) = s.find("/ruby/") {
@@ -256,6 +259,30 @@ fn string_to_tags(tags: &str) -> Vec<(&str, &str)> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use pyroscope::backend::{Report, StackFrame, StackTrace};
+    use std::collections::HashMap;
+
+    #[test]
+    fn transform_report_does_not_panic_when_cwd_is_a_suffix_of_filename() {
+        let stacktrace = StackTrace {
+            frames: vec![StackFrame {
+                filename: Some("bin/rails".to_string()),
+                ..Default::default()
+            }],
+            ..Default::default()
+        };
+        let report = Report::new(HashMap::from([(stacktrace, 1)]));
+
+        let out = transform_report(report, Some("/rails"));
+
+        let (out_stacktrace, _) = out.data.iter().next().unwrap();
+        assert_eq!(
+            out_stacktrace.frames[0].filename.as_deref(),
+            Some("bin/rails")
+        );
+    }
+
     #[test]
     fn test_cargo_version_matches_ruby_version() {
         let cargo_version = env!("CARGO_PKG_VERSION");
