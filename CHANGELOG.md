@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.3](https://github.com/grafana/pyroscope-ruby/compare/ruby-1.0.2...ruby/1.0.3) (2026-04-10)
+
+
+### Bug Fixes
+
+* **rbspy:** don't panic when cwd is a suffix of a frame filename ([#32](https://github.com/grafana/pyroscope-ruby/issues/32)) ([b1af075](https://github.com/grafana/pyroscope-ruby/commit/b1af07504eb8ddb7ec34565755bbe9be7f74283a))
+
+
+### Miscellaneous Chores
+
+* **deps:** update ruby:4.0 docker digest to d6c89d3 ([#28](https://github.com/grafana/pyroscope-ruby/issues/28)) ([5ca4015](https://github.com/grafana/pyroscope-ruby/commit/5ca40153476edded0198ae3e962f2286a88ea3be))
+* **deps:** update ruby/setup-ruby action to v1.300.0 ([#31](https://github.com/grafana/pyroscope-ruby/issues/31)) ([9f69455](https://github.com/grafana/pyroscope-ruby/commit/9f69455f243d4459d0e66389ce607d3118a9a867))
+
 ## [1.0.2](https://github.com/grafana/pyroscope-ruby/compare/ruby-1.0.1...ruby/1.0.2) (2026-04-08)
 
 
