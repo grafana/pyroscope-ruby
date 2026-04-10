@@ -14,10 +14,13 @@ const LOG_TAG: &str = "Pyroscope::rbspy::ffi";
 const RBSPY_NAME: &str = "rbspy";
 const RBSPY_VERSION: &str = env!("CARGO_PKG_VERSION");
 
-pub fn transform_report(report: Report) -> Report {
-    let cwd = env::current_dir().unwrap();
-    let cwd = cwd.to_str().unwrap_or("");
+fn transform_report_with_current_dir(report: Report) -> Report {
+    let cwd = env::current_dir().ok();
+    let cwd = cwd.as_deref().and_then(|p| p.to_str());
+    transform_report(report, cwd)
+}
 
+pub fn transform_report(report: Report, cwd: Option<&str>) -> Report {
     let data = report
         .data
         .iter()
@@ -28,8 +31,11 @@ pub fn transform_report(report: Report) -> Report {
                 .map(|frame| {
                     let frame = frame.to_owned();
                     let mut s = frame.filename.unwrap();
-                    if let Some(i) = s.find(cwd) {
-                        s = s[(i + cwd.len() + 1)..].to_string();
+                    let stripped = cwd
+                        .and_then(|c| s.strip_prefix(c))
+                        .and_then(|rest| rest.strip_prefix('/'));
+                    if let Some(rest) = stripped {
+                        s = rest.to_string();
                     } else if let Some(i) = s.find("/gems/") {
                         s = s[(i + 1)..].to_string();
                     } else if let Some(i) = s.find("/ruby/") {
@@ -165,7 +171,7 @@ pub unsafe extern "C" fn initialize_agent(
         RBSPY_VERSION,
         rbspy,
     )
-    .func(transform_report)
+    .func(transform_report_with_current_dir)
     .tags(tags);
 
     if !basic_auth_user.is_empty() && !basic_auth_password.is_empty() {
@@ -253,6 +259,65 @@ fn string_to_tags(tags: &str) -> Vec<(&str, &str)> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use pyroscope::backend::{Report, StackFrame, StackTrace};
+    use std::collections::HashMap;
+
+    fn report_with_filename(filename: &str) -> Report {
+        let stacktrace = StackTrace {
+            frames: vec![StackFrame {
+                filename: Some(filename.to_string()),
+                ..Default::default()
+            }],
+            ..Default::default()
+        };
+        Report::new(HashMap::from([(stacktrace, 1)]))
+    }
+
+    fn transformed_filename(report: Report) -> String {
+        let (stacktrace, _) = report.data.iter().next().unwrap();
+        stacktrace.frames[0].filename.clone().unwrap()
+    }
+
+    #[test]
+    fn transform_report_does_not_panic_when_cwd_is_a_suffix_of_filename() {
+        let report = report_with_filename("bin/rails");
+        let out = transform_report(report, Some("/rails"));
+        assert_eq!(transformed_filename(out), "bin/rails");
+    }
+
+    #[test]
+    fn transform_report_strips_cwd_prefix() {
+        let report = report_with_filename("/rails/app/models/user.rb");
+        let out = transform_report(report, Some("/rails"));
+        assert_eq!(transformed_filename(out), "app/models/user.rb");
+    }
+
+    #[test]
+    fn transform_report_rewrites_gems_path() {
+        let report =
+            report_with_filename("/usr/local/bundle/gems/activerecord-7.0.0/lib/active_record.rb");
+        let out = transform_report(report, None);
+        assert_eq!(
+            transformed_filename(out),
+            "gems/activerecord-7.0.0/lib/active_record.rb",
+        );
+    }
+
+    #[test]
+    fn transform_report_rewrites_ruby_stdlib_path() {
+        let report = report_with_filename("/usr/local/lib/ruby/3.3.0/json/common.rb");
+        let out = transform_report(report, None);
+        assert_eq!(transformed_filename(out), "json/common.rb");
+    }
+
+    #[test]
+    fn transform_report_leaves_unrelated_filename_unchanged() {
+        let report = report_with_filename("/tmp/unrelated.rb");
+        let out = transform_report(report, Some("/app"));
+        assert_eq!(transformed_filename(out), "/tmp/unrelated.rb");
+    }
+
     #[test]
     fn test_cargo_version_matches_ruby_version() {
         let cargo_version = env!("CARGO_PKG_VERSION");
