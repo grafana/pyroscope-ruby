@@ -1,10 +1,11 @@
 name: Ruby Release
 
 on:
-  push:
-    tags:
-      - 'ruby-*'
-
+  workflow_call:
+    inputs:
+      tag_name:
+        required: true
+        type: string
 
 jobs:
   ruby-release-linux:
@@ -26,6 +27,7 @@ jobs:
       - name: Upload release artifact
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
         with:
+          tag_name: ${{ inputs.tag_name }}
           draft: true
           files: pkg/*.gem
 
@@ -48,6 +50,7 @@ jobs:
       - name: Upload release artifact
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
         with:
+          tag_name: ${{ inputs.tag_name }}
           draft: true
           files: pkg/*.gem
 
@@ -91,6 +94,7 @@ jobs:
       - name: Upload release artifact
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
         with:
+          tag_name: ${{ inputs.tag_name }}
           draft: true
           files: pkg/*.gem
 
@@ -124,13 +128,14 @@ jobs:
       - name: Upload release artifact
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
         with:
+          tag_name: ${{ inputs.tag_name }}
           draft: true
           files: pkg/*.gem
 
   ruby-release:
     permissions:
       contents: write
-    name: Ruby Gem
+    name: Verify release
     runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-small' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -141,15 +146,8 @@ jobs:
           toolchain: stable
       - name: Verify tag matches package version
         env:
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.tag_name }}
         run: make check/tag-version
       - name: Verify Cargo version matches Ruby version
         run: cargo test --locked -- test_cargo_version_matches_ruby_version
         working-directory: ext/rbspy
-      - id: auto-release
-        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
-        with:
-          tag_name: "${{ github.ref_name }}"
-          name: "Ruby Gem: ${{ github.ref_name }}"
-          draft: true
-          prerelease: false
