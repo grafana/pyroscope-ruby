@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/grafana/pyroscope-ruby/compare/ruby-1.0.3...ruby/1.0.4) (2026-04-11)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency openssl/openssl to v3.5.6 ([#35](https://github.com/grafana/pyroscope-ruby/issues/35)) ([94725f9](https://github.com/grafana/pyroscope-ruby/commit/94725f947c94113a3df0c0100661e124d3df3d57))
+
 ## [1.0.3](https://github.com/grafana/pyroscope-ruby/compare/ruby-1.0.2...ruby/1.0.3) (2026-04-10)
 
 
