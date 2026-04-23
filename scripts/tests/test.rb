@@ -13,7 +13,9 @@ def start_local_pyroscope
     "--name", container_name,
     "-p", "4040:4040",
     "grafana/pyroscope:latest",
-    "-ingester.min-ready-duration=0s"
+    "-ingester.min-ready-duration=0s",
+    "-metastore.min-ready-duration=0s",
+    "-segment-writer.min-ready-duration=0s"
   )
 
   unless $?.success?
@@ -21,7 +23,7 @@ def start_local_pyroscope
     exit 1
   end
 
-  20.times do
+  60.times do
     ready = system("curl", "-fsS", "http://localhost:4040/ready")
     return container_name if ready
     sleep 1
