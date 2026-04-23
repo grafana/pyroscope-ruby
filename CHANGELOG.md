@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.5](https://github.com/grafana/pyroscope-ruby/compare/ruby-1.0.4...ruby/1.0.5) (2026-04-23)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump openssl from 0.10.76 to 0.10.78 in /ext/rbspy ([#54](https://github.com/grafana/pyroscope-ruby/issues/54)) ([e3aec4f](https://github.com/grafana/pyroscope-ruby/commit/e3aec4fda89e3d7eb309a85709e972860be28914))
+* **deps:** lock file maintenance ([#37](https://github.com/grafana/pyroscope-ruby/issues/37)) ([ff66c0c](https://github.com/grafana/pyroscope-ruby/commit/ff66c0c86a0578e9c938af78bb5e9740b47bfc61))
+* **deps:** lock file maintenance ([#51](https://github.com/grafana/pyroscope-ruby/issues/51)) ([99d4d11](https://github.com/grafana/pyroscope-ruby/commit/99d4d11b7b8b95ad8700ccdabe0c2d5267e8b0e2))
+* **deps:** update rust crate libc to v0.2.185 ([#45](https://github.com/grafana/pyroscope-ruby/issues/45)) ([3cd4e5f](https://github.com/grafana/pyroscope-ruby/commit/3cd4e5f2069f90770a127b40c132f57583245ae4))
+
 ## [1.0.4](https://github.com/grafana/pyroscope-ruby/compare/ruby-1.0.3...ruby/1.0.4) (2026-04-11)
 
 
