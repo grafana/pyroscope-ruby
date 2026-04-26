@@ -111,7 +111,7 @@ jobs:
       # pinned in Gemfile.lock. Remove once the AMI has been updated to make the
       # toolcache writable, per https://github.com/ruby/setup-ruby#using-self-hosted-runners
       - name: Make toolcache writable (AMI workaround)
-        run: sudo chown -R "$USER" /opt/hostedtoolcache
+        run: sudo chown -R "$(id -un)" /opt/hostedtoolcache
 
       - uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
         with:
