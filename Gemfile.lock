@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pyroscope (1.0.1)
+    pyroscope (1.0.5)
       ffi
 
 GEM
