@@ -91,12 +91,12 @@ jobs:
       - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
         with:
           toolchain: 1.88.0
-      - name: Build source gem
-        run: bundle && rake source:gem
-      - name: Install source gem
-        run: gem install pkg/pyroscope-*.gem
-      - name: Verify import
-        run: ruby -e "require 'pyroscope'; require 'pyroscope/version'; puts Pyroscope::VERSION"
+      - name: Build, install, and verify source gem
+        run: |
+          set -ex
+          bundle && rake source:gem
+          gem install pkg/pyroscope-*.gem
+          ruby -e "require 'pyroscope'; require 'pyroscope/version'; puts Pyroscope::VERSION"
 
   ruby-linux-test:
     strategy:
