@@ -16,7 +16,7 @@ jobs:
     if: "startsWith(github.event.release.tag_name, 'ruby-')"
     steps:
       - uses: rubygems/configure-rubygems-credentials@bc6dd217f8a4f919d6835fcfefd470ef821f5c44 # v1.0.0
-      - uses: robinraju/release-downloader@daf26c55d821e836577a15f77d86ddc078948b05 # 1.12
+      - uses: robinraju/release-downloader@28fc21f50d76778e7023361aa1f863e717d3d56f # v1.13
         with:
           tag: ${{ github.event.release.tag_name }}
           fileName: "*"
