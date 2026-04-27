@@ -94,7 +94,8 @@ jobs:
       - name: Build, install, and verify source gem
         run: |
           set -ex
-          bundle && rake source:gem
+          bundle
+          rake source:gem
           gem install pkg/pyroscope-*.gem
           ruby -e "require 'pyroscope'; require 'pyroscope/version'; puts Pyroscope::VERSION"
 
