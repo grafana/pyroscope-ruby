@@ -23,13 +23,19 @@ Gem::Specification.new do |s|
     "source_code_uri" => "https://github.com/grafana/pyroscope-ruby",
   }
 
-  # TODO: s.files is incomplete — ext/rbspy/ sources are missing, so building
-  # the gem from source does not work. See https://github.com/grafana/pyroscope-ruby/issues/2
   s.files = [
     "Gemfile",
     "Gemfile.lock",
     "LICENSE",
     "README.md",
+    "ext/rbspy/Cargo.lock",
+    "ext/rbspy/Cargo.toml",
+    "ext/rbspy/Rakefile",
+    "ext/rbspy/cbindgen.toml",
+    "ext/rbspy/extconf.rb",
+    "ext/rbspy/include/rbspy.h",
+    "ext/rbspy/src/backend.rs",
+    "ext/rbspy/src/lib.rs",
     "lib/pyroscope.rb",
     "lib/pyroscope/version.rb",
     "pyroscope.gemspec",

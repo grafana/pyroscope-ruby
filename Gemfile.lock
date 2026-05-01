@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pyroscope (1.0.1)
+    pyroscope (1.0.5)
       ffi
 
 GEM
@@ -21,4 +21,4 @@ DEPENDENCIES
   rake (~> 13.0)
 
 BUNDLED WITH
-  4.0.9
+  4.0.10
