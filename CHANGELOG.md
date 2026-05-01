@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.0.6](https://github.com/grafana/pyroscope-ruby/compare/ruby-1.0.5...ruby/1.0.6) (2026-05-01)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate rbspy to 0.46 ([#67](https://github.com/grafana/pyroscope-ruby/issues/67)) ([bdc1fe8](https://github.com/grafana/pyroscope-ruby/commit/bdc1fe899cb0ae4f616a48e6fabdb6d39ede284f))
+
+
+### Miscellaneous Chores
+
+* **deps:** bump rand from 0.8.5 to 0.8.6 in /ext/rbspy ([#57](https://github.com/grafana/pyroscope-ruby/issues/57)) ([6d19d93](https://github.com/grafana/pyroscope-ruby/commit/6d19d930da869298046cad99500da913caa7133e))
+* **deps:** update googleapis/release-please-action action to v5 ([#61](https://github.com/grafana/pyroscope-ruby/issues/61)) ([34de611](https://github.com/grafana/pyroscope-ruby/commit/34de61143b31ea2bb1c139dcd56ba801f146712c))
+* **deps:** update ruby/setup-ruby action to v1.305.0 ([#44](https://github.com/grafana/pyroscope-ruby/issues/44)) ([48c9e73](https://github.com/grafana/pyroscope-ruby/commit/48c9e735c7b69ca99524bbd8953d2ae06ccc9dc1))
+* **deps:** update rust crate libc to v0.2.186 ([#62](https://github.com/grafana/pyroscope-ruby/issues/62)) ([1363586](https://github.com/grafana/pyroscope-ruby/commit/1363586a824b2a73296a3d766c136966c16fcd41))
+* **deps:** update rust crate pyroscope to v2.0.1 ([#53](https://github.com/grafana/pyroscope-ruby/issues/53)) ([807eab7](https://github.com/grafana/pyroscope-ruby/commit/807eab73cbbb07ed5783565042567e799151927f))
+* **deps:** update rust crate pyroscope to v2.0.3 ([#65](https://github.com/grafana/pyroscope-ruby/issues/65)) ([b943527](https://github.com/grafana/pyroscope-ruby/commit/b943527f3b63c47948d4577cf6d22d826611bc2c))
+* **deps:** update rust crate remoteprocess to v0.5.2 ([#59](https://github.com/grafana/pyroscope-ruby/issues/59)) ([14cc724](https://github.com/grafana/pyroscope-ruby/commit/14cc724eebf605b87ae4497a2b2ea2cc1396bcde))
+
 ## [1.0.5](https://github.com/grafana/pyroscope-ruby/compare/ruby-1.0.4...ruby/1.0.5) (2026-04-23)
 
 
