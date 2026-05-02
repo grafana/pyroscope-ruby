@@ -106,6 +106,15 @@ jobs:
         with:
           persist-credentials: false
 
+      # Workaround: the self-hosted runner AMI bakes /opt/hostedtoolcache as
+      # root, which blocks setup-ruby from installing the bundler version
+      # pinned in Gemfile.lock. Remove once the AMI has been updated to make the
+      # toolcache writable, per https://github.com/ruby/setup-ruby#using-self-hosted-runners
+      - name: Make Ruby toolcache writable (AMI workaround)
+        run: |
+          sudo mkdir -p /opt/hostedtoolcache/Ruby
+          sudo chown -R "$(id -un)" /opt/hostedtoolcache/Ruby
+
       - uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
         with:
           ruby-version: '4.0.2'

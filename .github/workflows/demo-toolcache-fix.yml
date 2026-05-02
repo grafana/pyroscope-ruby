@@ -1,0 +1,51 @@
+name: Demo Source Release Fix
+
+# Reproduces the source-gem release failure (issue #34) and verifies the
+# proposed chown workaround. The grafana self-hosted runner AMI bakes the
+# Ruby toolcache as root, which blocks ruby/setup-ruby from installing the
+# bundler version pinned in Gemfile.lock. Setup-ruby's docs require the
+# toolcache to be writable by the runner user:
+#   https://github.com/ruby/setup-ruby#using-self-hosted-runners
+#
+# This workflow is only meaningful on grafana's self-hosted runner; on
+# GitHub-hosted ubuntu-latest the toolcache is already writable, so both
+# jobs pass and the demo is uninformative.
+#
+# Delete this workflow once the AMI ships with a writable toolcache.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  demo-without-fix:
+    name: Demo - reproduce failure (no chown)
+    runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-small' || 'ubuntu-latest' }}
+    continue-on-error: true
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
+        with:
+          ruby-version: '4.0.2'
+
+  demo-with-fix:
+    name: Demo - verify fix (with chown)
+    runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-small' || 'ubuntu-latest' }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Make Ruby toolcache writable (AMI workaround)
+        run: |
+          sudo mkdir -p /opt/hostedtoolcache/Ruby
+          sudo chown -R "$(id -un)" /opt/hostedtoolcache/Ruby
+      - uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
+        with:
+          ruby-version: '4.0.2'
