@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-small' || 'ubuntu-latest' }}
     if: "startsWith(github.event.release.tag_name, 'ruby-')"
     steps:
-      - uses: rubygems/configure-rubygems-credentials@bc6dd217f8a4f919d6835fcfefd470ef821f5c44 # v1.0.0
+      - uses: rubygems/configure-rubygems-credentials@762a4b77c3300434bb57c7ce80b20e36231927aa # v2.0.0
       - uses: robinraju/release-downloader@daf26c55d821e836577a15f77d86ddc078948b05 # 1.12
         with:
           tag: ${{ github.event.release.tag_name }}
