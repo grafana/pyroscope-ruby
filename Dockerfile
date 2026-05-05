@@ -36,7 +36,7 @@ WORKDIR /gem
 ADD Gemfile Gemfile.lock LICENSE pyroscope.gemspec Rakefile README.md /gem/
 ADD lib/pyroscope/version.rb /gem/lib/pyroscope/version.rb
 ADD lib/pyroscope.rb /gem/lib/pyroscope.rb
-ADD ext/rbspy/extconf.rb ext/rbspy/Rakefile /gem/ext/rbspy/
+ADD ext/rbspy/ /gem/ext/rbspy/
 
 
 RUN bundle install

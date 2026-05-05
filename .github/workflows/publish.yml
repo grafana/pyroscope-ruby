@@ -26,7 +26,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0 # trufflehog:ignore
         with:
-          ruby-version: '4.0.2'
+          ruby-version: '4.0.3'
       - run: |
           set -ex
           cd dist
