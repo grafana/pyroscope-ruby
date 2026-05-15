@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.7](https://github.com/grafana/pyroscope-ruby/compare/ruby-1.0.6...ruby/1.0.7) (2026-05-15)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate rbspy to 0.47 ([#77](https://github.com/grafana/pyroscope-ruby/issues/77)) ([eed425d](https://github.com/grafana/pyroscope-ruby/commit/eed425d5edb60e2d41a431968f2573a40fa0c240))
+* include ext/rbspy/ sources in source gem so it builds from source ([#64](https://github.com/grafana/pyroscope-ruby/issues/64)) ([f52a8d8](https://github.com/grafana/pyroscope-ruby/commit/f52a8d8938b1fe1289d57d4d1d590d3e48a84899))
+
+
+### Miscellaneous Chores
+
+* **deps:** bump openssl from 0.10.78 to 0.10.79 in /ext/rbspy ([#74](https://github.com/grafana/pyroscope-ruby/issues/74)) ([8952c82](https://github.com/grafana/pyroscope-ruby/commit/8952c8209ced5854adadb0f1131134d779606e94))
+* **deps:** lock file maintenance ([#73](https://github.com/grafana/pyroscope-ruby/issues/73)) ([cc0d473](https://github.com/grafana/pyroscope-ruby/commit/cc0d473f5fac45daf996bb35df4c59f77760f785))
+* **deps:** update rubygems/configure-rubygems-credentials action to v2 ([#72](https://github.com/grafana/pyroscope-ruby/issues/72)) ([f8af698](https://github.com/grafana/pyroscope-ruby/commit/f8af6988cb1e203ff3800603cdc7b3999db1e0b0))
+
 ## [1.0.6](https://github.com/grafana/pyroscope-ruby/compare/ruby-1.0.5...ruby/1.0.6) (2026-05-01)
 
 
