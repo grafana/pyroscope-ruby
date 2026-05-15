@@ -31,7 +31,7 @@ ADD ext/rbspy/ /ext/rbspy
 # TODO --frozen
 RUN --mount=type=cache,target=/root/.cargo/registry cargo build -p ffiruby --release
 
-FROM ruby:4.0@sha256:d6c89d3f16ec6d210d66f29e2213fe9514905f6a78ae06456eb31580ebc6a318 AS builder-gem
+FROM ruby:4.0@sha256:92d1d5b687305a5e1d8405f2f499f538b3ed41e6c230e36bba1927965fe46728 AS builder-gem
 WORKDIR /gem
 ADD Gemfile Gemfile.lock LICENSE pyroscope.gemspec Rakefile README.md /gem/
 ADD lib/pyroscope/version.rb /gem/lib/pyroscope/version.rb
