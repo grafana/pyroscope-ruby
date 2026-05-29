@@ -127,6 +127,7 @@ jobs:
       - uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
         with:
           ruby-version: '4.0.3'
+          bundler: default
       - name: Install bundles
         run: bundle
       - name: Build source gem
