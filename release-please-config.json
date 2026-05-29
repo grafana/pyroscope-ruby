@@ -1,25 +1,14 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "draft": true,
+  "skip-changelog": true,
   "packages": {
     ".": {
       "component": "ruby",
       "release-type": "ruby",
       "package-name": "pyroscope",
-      "changelog-path": "CHANGELOG.md",
       "include-v-in-tag": false,
       "include-component-in-tag": true,
-      "skip-github-release": true,
-      "changelog-sections": [
-        {"type": "feat", "section": "Features"},
-        {"type": "fix", "section": "Bug Fixes"},
-        {"type": "perf", "section": "Performance Improvements"},
-        {"type": "chore", "section": "Miscellaneous Chores"},
-        {"type": "revert", "section": "Reverts"},
-        {"type": "docs", "section": "Documentation"},
-        {"type": "refactor", "section": "Code Refactoring"},
-        {"type": "build", "section": "Build System"},
-        {"type": "ci", "section": "Continuous Integration"}
-      ],
       "extra-files": [
         {
           "type": "generic",
