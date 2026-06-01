@@ -1549,9 +1549,9 @@ dependencies = [
 
 [[package]]
 name = "pyroscope"
-version = "2.0.4"
+version = "2.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "942d4561e34d24ce01820f6e6bdf1dcff292b6f0c03245b0b4e5b4f89dddd85d"
+checksum = "b6869e0f2cae5cef10281c57d5a260f91372d7f190a7f717eb1a54f643d92151"
 dependencies = [
  "lazy_static",
  "libc",
@@ -2078,7 +2078,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.3.4",
+ "getrandom 0.4.2",
  "once_cell",
  "rustix",
  "windows-sys",
