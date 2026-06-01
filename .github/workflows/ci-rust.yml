@@ -10,6 +10,22 @@ permissions:
   contents: read
 
 jobs:
+  lockfile:
+    name: cargo lockfile up-to-date
+    runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-small' || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: 1.96.0
+
+      - name: Check lockfile is up to date
+        run: cargo fetch --locked
+        working-directory: ext/rbspy
+
   format:
     name: cargo fmt --check
     runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-small' || 'ubuntu-latest' }}
@@ -20,7 +36,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
         with:
-          toolchain: stable
+          toolchain: 1.96.0
           components: rustfmt
 
       - name: Run formatting check
@@ -37,7 +53,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
         with:
-          toolchain: stable
+          toolchain: 1.96.0
           components: clippy
 
       - name: Run clippy
@@ -62,7 +78,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
         with:
-          toolchain: stable
+          toolchain: 1.96.0
 
       - name: Run tests
         run: cargo test --locked
