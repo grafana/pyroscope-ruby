@@ -18,11 +18,16 @@ jobs:
       tag_name: ${{ steps.rp.outputs.tag_name }}
       sha: ${{ steps.rp.outputs.sha }}
     steps:
+      - id: get-github-app-token
+        uses: grafana/shared-workflows/actions/create-github-app-token@580590a644e82e79bb2598bdaba0be245a14dda0 # create-github-app-token/v0.2.2
+        with:
+          github_app: pyroscope-development-app
       - id: rp
         uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          token: ${{ steps.get-github-app-token.outputs.token }}
 
   ruby-release-linux:
     permissions:
