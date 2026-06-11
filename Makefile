@@ -12,6 +12,15 @@ linux/amd64:
 		-f Dockerfile \
 		.
 
+.PHONY: linux/amd64-musl
+linux/amd64-musl:
+	docker buildx build \
+		--build-arg="TARGET_TASK=x86_64_linux_musl:gem" \
+		--output=. \
+		--platform=linux/amd64 \
+		-f Dockerfile.musl \
+		.
+
 .PHONY: linux/arm64
 linux/arm64:
 	docker buildx build  \

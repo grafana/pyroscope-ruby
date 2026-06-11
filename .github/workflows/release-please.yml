@@ -46,6 +46,9 @@ jobs:
           - name: linux-arm64
             runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-arm64-large' || 'ubuntu-24.04-arm' }}
             make-target: linux/arm64
+          - name: linux-amd64-musl
+            runs-on: ${{ github.repository_owner == 'grafana' && 'ubuntu-x64-large' || 'ubuntu-latest' }}
+            make-target: linux/amd64-musl
     name: Release ruby linux - ${{ matrix.name }}
     runs-on: ${{ matrix.runs-on }}
     steps:
