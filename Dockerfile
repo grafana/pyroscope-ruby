@@ -1,6 +1,6 @@
 ARG PLATFORM=x86_64
 FROM quay.io/pypa/manylinux2014_${PLATFORM} AS builder
-ARG OPENSSL_VERSION=3.5.6
+ARG OPENSSL_VERSION=3.5.7
 
 ENV RUST_VERSION=1.96
 RUN curl https://static.rust-lang.org/rustup/dist/$(arch)-unknown-linux-musl/rustup-init -o ./rustup-init \
