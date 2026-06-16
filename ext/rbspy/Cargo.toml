@@ -1,6 +1,6 @@
 [package]
 name = "ffiruby"
-version = "1.0.8" # x-release-please-version
+version = "1.0.9" # x-release-please-version
 edition = "2021"
 rust-version = "1.66"
 
