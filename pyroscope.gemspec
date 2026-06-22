@@ -34,12 +34,10 @@ Gem::Specification.new do |s|
     "ext/rbspy/cbindgen.toml",
     "ext/rbspy/extconf.rb",
     "ext/rbspy/include/rbspy.h",
-    "ext/rbspy/src/backend.rs",
-    "ext/rbspy/src/lib.rs",
     "lib/pyroscope.rb",
     "lib/pyroscope/version.rb",
     "pyroscope.gemspec",
-  ]
+  ] + Dir["ext/rbspy/src/**/*.rs"].sort
   s.platform = Gem::Platform::RUBY
 
   s.required_ruby_version = ">= 1.9.3"
