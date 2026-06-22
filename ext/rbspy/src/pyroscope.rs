@@ -44,6 +44,10 @@ pub struct PyroscopeConfig {
     pub spy_name: String,
     /// Spy Version
     pub spy_version: String,
+    /// Runtime Name
+    pub runtime_name: String,
+    /// Runtime Version
+    pub runtime_version: String,
     pub basic_auth: Option<BasicAuth>,
     /// Function to apply
     pub func: Option<fn(Report) -> Report>,
@@ -66,6 +70,8 @@ impl Default for PyroscopeConfig {
             sample_rate: 100u32,
             spy_name: PPROFRS_SPY_NAME.to_string(),
             spy_version: PPROFRS_SPY_VERSION.to_string(),
+            runtime_name: String::new(),
+            runtime_version: String::new(),
             basic_auth: None,
             func: None,
             tenant_id: None,
@@ -96,6 +102,8 @@ impl PyroscopeConfig {
             sample_rate,
             spy_name: spy_name.as_ref().to_owned(),
             spy_version: spy_version.as_ref().to_owned(),
+            runtime_name: String::new(),
+            runtime_version: String::new(),
             basic_auth: None,
             func: None,
             tenant_id: None,
@@ -145,6 +153,14 @@ impl PyroscopeConfig {
 
         Self {
             tags: tags_hashmap,
+            ..self
+        }
+    }
+
+    pub fn runtime(self, runtime_name: String, runtime_version: String) -> Self {
+        Self {
+            runtime_name,
+            runtime_version,
             ..self
         }
     }
@@ -291,6 +307,13 @@ impl PyroscopeAgentBuilder {
     pub fn tags(self, tags: Vec<(&str, &str)>) -> Self {
         Self {
             config: self.config.tags(tags),
+            ..self
+        }
+    }
+
+    pub fn runtime(self, runtime_name: String, runtime_version: String) -> Self {
+        Self {
+            config: self.config.runtime(runtime_name, runtime_version),
             ..self
         }
     }

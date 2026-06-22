@@ -20,6 +20,13 @@ use reqwest::Url;
 use uuid::Uuid;
 
 const LOG_TAG: &str = "Pyroscope::Session";
+const LABEL_SCOPE_NAME: &str = "otel.scope.name";
+const LABEL_SCOPE_VERSION: &str = "otel.scope.version";
+const LABEL_PROCESS_RUNTIME_NAME: &str = "process.runtime.name";
+const LABEL_PROCESS_RUNTIME_VERSION: &str = "process.runtime.version";
+const LABEL_SERVICE_NAME: &str = "service_name";
+const LABEL_PROFILE_NAME: &str = "__name__";
+const SCOPE_NAME: &str = "com.grafana.pyroscope/ruby";
 
 /// Session Signal
 ///
@@ -151,21 +158,7 @@ impl Session {
             }
         };
 
-        let mut labels: Vec<LabelPair> = Vec::with_capacity(2 + self.config.tags.len());
-        labels.push(LabelPair {
-            name: "service_name".to_string(),
-            value: self.config.application_name.clone(),
-        });
-        labels.push(LabelPair {
-            name: "__name__".to_string(),
-            value: profile_type,
-        });
-        for tag in self.config.tags {
-            labels.push(LabelPair {
-                name: tag.0,
-                value: tag.1,
-            })
-        }
+        let labels = labels_for_profile(&self.config, profile_type);
         let req = PushRequest {
             series: vec![RawProfileSeries {
                 labels,
@@ -236,4 +229,47 @@ impl Session {
         let compressed_data = encoder.finish().into_result()?;
         Ok(compressed_data)
     }
+}
+
+fn labels_for_profile(config: &PyroscopeConfig, profile_type: String) -> Vec<LabelPair> {
+    let mut labels: Vec<LabelPair> = Vec::with_capacity(6 + config.tags.len());
+    labels.push(LabelPair {
+        name: LABEL_PROFILE_NAME.to_string(),
+        value: profile_type,
+    });
+    for (k, v) in &config.tags {
+        if k == LABEL_PROFILE_NAME {
+            continue;
+        }
+        labels.push(LabelPair {
+            name: k.clone(),
+            value: v.clone(),
+        })
+    }
+    push_label_if_absent(&mut labels, LABEL_SERVICE_NAME, &config.application_name);
+    push_label_if_absent(&mut labels, LABEL_SCOPE_NAME, SCOPE_NAME);
+    push_label_if_absent(&mut labels, LABEL_SCOPE_VERSION, &config.spy_version);
+    push_label_if_absent(
+        &mut labels,
+        LABEL_PROCESS_RUNTIME_NAME,
+        &config.runtime_name,
+    );
+    push_label_if_absent(
+        &mut labels,
+        LABEL_PROCESS_RUNTIME_VERSION,
+        &config.runtime_version,
+    );
+
+    labels
+}
+
+fn push_label_if_absent(labels: &mut Vec<LabelPair>, name: &str, value: &str) {
+    if labels.iter().any(|label| label.name == name) {
+        return;
+    }
+
+    labels.push(LabelPair {
+        name: name.to_string(),
+        value: value.to_string(),
+    });
 }
