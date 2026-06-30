@@ -215,7 +215,6 @@ jobs:
             await commitFilesThroughGitHubApi({
               github,
               context,
-              core,
               branchName: 'release-please--branches--main--components--ruby',
               files: ['ext/rbspy/Cargo.lock'],
               message: 'chore: update Cargo.lock',

@@ -3,7 +3,6 @@ const fs = require('fs');
 module.exports = async function commitFilesThroughGitHubApi({
   github,
   context,
-  core,
   branchName,
   files,
   message,
@@ -74,5 +73,5 @@ module.exports = async function commitFilesThroughGitHubApi({
     sha: commit.sha,
     force: false,
   });
-  core.info(`Updated ${branchName} to ${commit.sha}`);
+  console.log(`Updated ${branchName} to ${commit.sha}`);
 };
