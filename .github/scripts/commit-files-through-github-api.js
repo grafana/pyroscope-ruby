@@ -59,15 +59,13 @@ module.exports = async function commitFilesThroughGitHubApi({
     parents: [headSha],
   });
 
-  // Default GITHUB_TOKEN commits created through the GitHub API are verified in
-  // practice, but do not fail the workflow if GitHub changes that behavior.
-  // if (!commit.verification?.verified) {
-  //   throw new Error(
-  //     `Created commit ${commit.sha} is not verified: ${
-  //       commit.verification?.reason ?? 'unknown'
-  //     }`
-  //   );
-  // }
+  if (!commit.verification?.verified) {
+    throw new Error(
+      `Created commit ${commit.sha} is not verified: ${
+        commit.verification?.reason ?? 'unknown'
+      }`
+    );
+  }
 
   await github.rest.git.updateRef({
     owner,
