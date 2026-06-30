@@ -26,6 +26,11 @@
           "path": "ext/rbspy/Cargo.toml"
         },
         {
+          "type": "toml",
+          "path": "ext/rbspy/Cargo.lock",
+          "jsonpath": "$.package[?(@.name.value==\"ffiruby\")].version"
+        },
+        {
           "type": "generic",
           "path": "lib/pyroscope/version.rb"
         }
