@@ -7,24 +7,7 @@ module.exports = async function commitFilesThroughGitHubApi({
   files,
   message,
 }) {
-  if (!branchName) {
-    throw new Error('branchName is required');
-  }
-  if (!message) {
-    throw new Error('message is required');
-  }
-  if (!Array.isArray(files) || files.length === 0) {
-    throw new Error('files must be a non-empty array');
-  }
-
   const {owner, repo} = context.repo;
-  const uniqueFiles = [...new Set(files)];
-  for (const file of uniqueFiles) {
-    if (typeof file !== 'string' || file.length === 0) {
-      throw new Error('files must only contain non-empty paths');
-    }
-  }
-
   const {data: ref} = await github.rest.git.getRef({
     owner,
     repo,
@@ -32,7 +15,7 @@ module.exports = async function commitFilesThroughGitHubApi({
   });
   const headSha = ref.object.sha;
 
-  const treeEntries = uniqueFiles.map(path => ({
+  const treeEntries = files.map(path => ({
     path,
     mode: '100644',
     type: 'blob',
