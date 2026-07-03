@@ -1,4 +1,17 @@
-mod backend;
+pub use crate::pyroscope::PyroscopeAgent;
+pub use error::{PyroscopeError, Result};
+
+pub mod backend;
+pub mod encode;
+pub mod error;
+pub mod ffikit;
+pub mod pyroscope;
+pub mod session;
+pub mod timer;
+
+mod rbspy_backend;
+mod utils;
+pub use utils::ThreadId;
 
 use rbspy::sampler::Sampler;
 use remoteprocess::Pid;
@@ -6,9 +19,9 @@ use std::env;
 use std::ffi::CStr;
 use std::os::raw::c_char;
 
-use crate::backend::Rbspy;
-use pyroscope::backend::{BackendConfig, BackendImpl, Report, StackFrame, Tag};
-use pyroscope::pyroscope::PyroscopeAgentBuilder;
+use crate::backend::{BackendConfig, BackendImpl, Report, StackFrame, Tag};
+use crate::pyroscope::PyroscopeAgentBuilder;
+use crate::rbspy_backend::Rbspy;
 
 const LOG_TAG: &str = "Pyroscope::rbspy::ffi";
 const RBSPY_NAME: &str = "rbspy";
@@ -182,28 +195,28 @@ pub unsafe extern "C" fn initialize_agent(
         agent_builder = agent_builder.tenant_id(tenant_id);
     }
 
-    let http_headers = pyroscope::pyroscope::parse_http_headers_json(http_headers_json);
+    let http_headers = crate::pyroscope::parse_http_headers_json(http_headers_json);
     match http_headers {
         Ok(http_headers) => {
             agent_builder = agent_builder.http_headers(http_headers);
         }
         Err(e) => match e {
-            pyroscope::PyroscopeError::Json(e) => {
+            crate::PyroscopeError::Json(e) => {
                 log::error!(target: LOG_TAG, "parse_http_headers_json error {}", e);
             }
-            pyroscope::PyroscopeError::AdHoc(e) => {
+            crate::PyroscopeError::AdHoc(e) => {
                 log::error!(target: LOG_TAG, "parse_http_headers_json {}", e);
             }
             _ => {}
         },
     }
 
-    pyroscope::ffikit::run(agent_builder).is_ok()
+    crate::ffikit::run(agent_builder).is_ok()
 }
 
 #[no_mangle]
 pub extern "C" fn drop_agent() -> bool {
-    pyroscope::ffikit::send(pyroscope::ffikit::Signal::Kill).is_ok()
+    crate::ffikit::send(crate::ffikit::Signal::Kill).is_ok()
 }
 
 #[no_mangle]
@@ -216,8 +229,8 @@ pub unsafe extern "C" fn add_thread_tag(key: *const c_char, value: *const c_char
         .unwrap()
         .to_owned();
 
-    pyroscope::ffikit::send(pyroscope::ffikit::Signal::AddThreadTag(
-        backend::self_thread_id(),
+    crate::ffikit::send(crate::ffikit::Signal::AddThreadTag(
+        rbspy_backend::self_thread_id(),
         Tag { key, value },
     ))
     .is_ok()
@@ -233,8 +246,8 @@ pub unsafe extern "C" fn remove_thread_tag(key: *const c_char, value: *const c_c
         .unwrap()
         .to_owned();
 
-    pyroscope::ffikit::send(pyroscope::ffikit::Signal::RemoveThreadTag(
-        backend::self_thread_id(),
+    crate::ffikit::send(crate::ffikit::Signal::RemoveThreadTag(
+        rbspy_backend::self_thread_id(),
         Tag { key, value },
     ))
     .is_ok()
@@ -260,7 +273,7 @@ fn string_to_tags(tags: &str) -> Vec<(&str, &str)> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use pyroscope::backend::{Report, StackFrame, StackTrace};
+    use crate::backend::{Report, StackFrame, StackTrace};
     use std::collections::HashMap;
 
     fn report_with_filename(filename: &str) -> Report {
