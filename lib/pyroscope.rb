@@ -166,7 +166,7 @@ module Pyroscope
     end
 
     def runtime_version
-      RUBY_VERSION
+      defined?(RUBY_ENGINE_VERSION) ? RUBY_ENGINE_VERSION : RUBY_VERSION
     end
 
     def tags_to_string(tags)
