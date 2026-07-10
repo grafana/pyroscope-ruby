@@ -9,7 +9,7 @@ module Pyroscope
     extend FFI::Library
     ffi_lib File.expand_path(File.dirname(__FILE__)) + "/rbspy/rbspy.#{RbConfig::CONFIG["DLEXT"]}"
     attach_function :initialize_logging, [:int], :bool
-    attach_function :initialize_agent, [:string, :string, :string, :string, :int, :bool, :bool, :bool, :string, :string, :string], :bool
+    attach_function :initialize_agent, [:string, :string, :string, :string, :int, :bool, :bool, :bool, :string, :string, :string, :string, :string], :bool
     attach_function :add_thread_tag, [:string, :string], :bool
     attach_function :remove_thread_tag, [:string, :string], :bool
     attach_function :drop_agent, [], :bool
@@ -103,6 +103,8 @@ module Pyroscope
         @config.oncpu || false,
         @config.report_pid || false,
         @config.report_thread_id || false,
+        runtime_name,
+        runtime_version,
         tags_to_string(@config.tags || {}),
         @config.tenant_id || "",
         http_headers_to_json(@config.http_headers || {})
@@ -158,6 +160,14 @@ module Pyroscope
     end
 
     private
+
+    def runtime_name
+      defined?(RUBY_ENGINE) ? RUBY_ENGINE : "ruby"
+    end
+
+    def runtime_version
+      defined?(RUBY_ENGINE_VERSION) ? RUBY_ENGINE_VERSION : RUBY_VERSION
+    end
 
     def tags_to_string(tags)
       tags.map { |k, v| "#{k}=#{v}" }.join(',')
