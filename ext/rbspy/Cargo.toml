@@ -9,7 +9,7 @@ name = "rbspy"
 crate-type = ["cdylib"]
 
 [dependencies]
-rbspy = { version = "0.49" }
+rbspy = { version = "0.50" }
 remoteprocess = "0.5"
 pretty_env_logger = "0.5"
 log = "0.4"
