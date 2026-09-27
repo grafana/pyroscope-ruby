@@ -1604,9 +1604,9 @@ checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
 
 [[package]]
 name = "rbspy"
-version = "0.51.0"
+version = "0.53.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b940d835e2da0fab5a81c875c1d359e5e826b82c762469feeb439806ef90c7c2"
+checksum = "cd3cff70d9e8e68ea1c3e77bc17348e544dd2cf42b0997601d8d0ad2454c2f3a"
 dependencies = [
  "anyhow",
  "chrono",
@@ -1640,9 +1640,9 @@ dependencies = [
 
 [[package]]
 name = "rbspy-ruby-structs"
-version = "0.51.0"
+version = "0.53.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e5149a83846ebf56c59303c11d8bb40a1695f6d82b4fac14d7a6c49c1be9dc3"
+checksum = "b905900d90b151dc4f49ba79b0e6d02e3a04d9523d949bb2aeaa9f3bf324b132"
 
 [[package]]
 name = "read-process-memory"
