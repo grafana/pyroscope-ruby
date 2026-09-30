@@ -1,3 +1,3 @@
 module Pyroscope
-  VERSION = '1.1.3'.freeze # x-release-please-version
+  VERSION = '1.1.4'.freeze # x-release-please-version
 end
