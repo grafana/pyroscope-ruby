@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 rbspy = { version = "0.53" }
-remoteprocess = "0.5"
+remoteprocess = "0.5.4"
 pretty_env_logger = "0.5"
 log = "0.4"
 libc = "0.2"
@@ -23,3 +23,6 @@ libflate = "2.1.0"
 prost = "0.14"
 serde_json = "1.0.115"
 lazy_static = "1.5.0"
+
+[patch.crates-io]
+rbspy = { git = "https://github.com/rbspy/rbspy", rev = "a36a3ef7e8457d9ecad3123ffd72926948dbfc92" }
