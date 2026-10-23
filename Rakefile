@@ -59,6 +59,16 @@ namespace :x86_64_linux do
   end
 end
 
+namespace :x86_64_linux_musl do
+  spec = Bundler.load_gemspec('pyroscope.gemspec')
+  spec.platform = 'x86_64-linux-musl'
+  spec.files += FileList['lib/rbspy/rbspy.*']
+  spec.extensions = []
+
+  Gem::PackageTask.new(spec) do |pkg|
+  end
+end
+
 namespace :aarch64_linux do
   spec = Bundler.load_gemspec('pyroscope.gemspec')
   spec.platform = 'aarch64-linux'
