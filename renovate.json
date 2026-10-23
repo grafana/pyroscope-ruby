@@ -17,6 +17,7 @@
       "matchPackageNames": [
         "rbspy",
         "remoteprocess",
+        "rust",
         "openssl/openssl"
       ],
       "enabled": true
@@ -34,6 +35,15 @@
     }
   ],
   "customManagers": [
+    {
+      "description": "Track the Rust toolchain version pinned via ENV RUST_VERSION in the Dockerfile so it moves together with the workflow toolchain pins.",
+      "customType": "regex",
+      "managerFilePatterns": ["/Dockerfile/"],
+      "matchStrings": ["ENV RUST_VERSION=(?<currentValue>[\\d.]+)"],
+      "depNameTemplate": "rust",
+      "packageNameTemplate": "rust-lang/rust",
+      "datasourceTemplate": "github-releases"
+    },
     {
       "description": "Track the OpenSSL C library version pinned via ARG OPENSSL_VERSION in the Dockerfile, resolved against openssl/openssl GitHub releases.",
       "customType": "regex",
