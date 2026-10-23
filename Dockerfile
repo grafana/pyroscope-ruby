@@ -34,7 +34,7 @@ RUN --mount=type=bind,from=manylinux,source=/opt/clang,target=/opt/clang \
 
 FROM manylinux AS builder
 
-ENV RUST_VERSION=1.96
+ENV RUST_VERSION=1.96.0
 RUN curl https://static.rust-lang.org/rustup/dist/$(arch)-unknown-linux-musl/rustup-init -o ./rustup-init \
     && chmod +x ./rustup-init \
     && ./rustup-init  -y --default-toolchain=${RUST_VERSION} --default-host=$(arch)-unknown-linux-gnu
