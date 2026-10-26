@@ -1,0 +1,38 @@
+FROM rust:1.96-alpine3.22@sha256:e1a14946462e327934471f777b3c039195d289b12961afc8ef53a4fecac1a83e AS builder
+
+RUN apk add --no-cache musl-dev gcc make pkgconf openssl-dev openssl-libs-static
+
+# The rustup musl host toolchain defaults to +crt-static, which cannot produce
+# a loadable cdylib; link musl dynamically like any other Alpine .so. The
+# resulting library depends only on musl libc and libgcc_s — the same set the
+# manylinux policy allows for the glibc gems.
+ENV RUSTFLAGS="-C target-feature=-crt-static"
+
+# Point openssl-sys at the static libs directly: when it goes through
+# pkg-config, OPENSSL_STATIC is ignored and libssl/libcrypto get linked
+# dynamically.
+ENV OPENSSL_STATIC=1
+ENV OPENSSL_LIB_DIR=/usr/lib
+ENV OPENSSL_INCLUDE_DIR=/usr/include
+
+WORKDIR /ext/rbspy
+
+ADD ext/rbspy/ /ext/rbspy
+
+RUN cargo build -p ffiruby --release --locked
+
+FROM ruby:4.0@sha256:d6c89d3f16ec6d210d66f29e2213fe9514905f6a78ae06456eb31580ebc6a318 AS builder-gem
+WORKDIR /gem
+ADD Gemfile Gemfile.lock LICENSE pyroscope.gemspec Rakefile README.md /gem/
+ADD lib/pyroscope/version.rb /gem/lib/pyroscope/version.rb
+ADD lib/pyroscope.rb /gem/lib/pyroscope.rb
+ADD ext/rbspy/ /gem/ext/rbspy/
+
+RUN bundle install
+
+COPY --from=builder /ext/rbspy/target/release/librbspy.so lib/rbspy/rbspy.so
+ARG TARGET_TASK=x86_64_linux_musl:gem
+RUN rake ${TARGET_TASK}
+
+FROM scratch
+COPY --from=builder-gem /gem/pkg/ /pkg/
