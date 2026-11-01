@@ -3,7 +3,7 @@ FROM quay.io/pypa/manylinux2014_${PLATFORM} AS manylinux
 RUN manylinux-install-clang -v v22.1.8.1
 
 FROM debian:trixie-slim AS openssl
-ARG OPENSSL_VERSION=3.5.9
+ARG OPENSSL_VERSION=3.6.5
 # Update together with OPENSSL_VERSION; SHA-256 from the upstream release asset.
 ARG OPENSSL_SHA256=603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a
 
